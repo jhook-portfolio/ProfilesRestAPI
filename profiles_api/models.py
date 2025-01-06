@@ -5,22 +5,22 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 class UserProfileManager(BaseUserManager):
     """Custom manager for user profiles, implemented due to overidding default user name field in UserProfile model"""
 
-    def create_user(self, email, name, password=None):
+    def create_user(self, email, first_name, last_name, password=None):
         """Create a new user profile"""
         if not email:
             raise ValueError("You must provide an email address")
         
         email = self.normalize_email(email)
-        user = self.model(email=email, name=name)
+        user = self.model(email=email, first_name=first_name, last_name=last_name)
 
         user.set_password(password)
         user.save(using=self._db)
 
         return user
     
-    def create_super_user(self, email, name, password):
+    def create_superuser(self, email, first_name, last_name, password):
         """Create a new super user"""
-        user = self.create_user(email, name, password)
+        user = self.create_user(email, first_name, last_name, password)
 
         user.is_superuser = True
         user.is_staff = True
@@ -39,7 +39,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     objects = UserProfileManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = ['first_name']
 
     def get_full_name(self):
         """Retrieve full name of user"""
